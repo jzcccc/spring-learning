@@ -5,25 +5,18 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.4.5</version>
+		<version>2.5.2</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.jzcccc</groupId>
-	<artifactId>security-jwt-oauth2-resource-server2</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>security-jwt-oauth2-resource-server</name>
-	<description>Demo project for Spring Boot</description>
+	<artifactId>mybatisplus</artifactId>
+	<version>1.0.0</version>
+	<name>mybatisplus</name>
+	<description>mybatis plus 测试</description>
 	<properties>
-		<java.version>11</java.version>
+		<java.version>1.8</java.version>
 	</properties>
 	<dependencies>
-
-		<dependency>
-			<groupId>org.springframework.security.oauth.boot</groupId>
-			<artifactId>spring-security-oauth2-autoconfigure</artifactId>
-			<version>2.1.2.RELEASE</version>
-		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>

@@ -10,26 +10,33 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 
 @EnableWebSecurity
 @Configuration
-@EnableResourceServer
+//@EnableResourceServer
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-    }
+  @Override
+  protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+    auth.inMemoryAuthentication()
+        .withUser("john")
+        .password(passwordEncoder().encode("john"))
+        .roles("USER");
+  }
 
-    @Override
-    @Bean
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+  }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
+  @Override
+  @Bean
+  public AuthenticationManager authenticationManagerBean() throws Exception {
+    return super.authenticationManagerBean();
+  }
+
+  @Override
+  protected void configure(HttpSecurity http) throws Exception {
 //        http
 //            .csrf()
 //            .disable()
@@ -37,21 +44,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //            .and()
 //            .httpBasic().and();
 ////            .addFilter(new TestFilter());
-        http.csrf().disable()
-            .authorizeRequests()
-            .anyRequest().authenticated()
-            .and()
-            .sessionManagement()
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-    }
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-                .withUser("john")
-                .password(passwordEncoder().encode("john"))
-                .roles("USER");
-    }
-
+    http.csrf().disable()
+        .authorizeRequests()
+        .antMatchers("/oauth/**")
+        .permitAll()
+        .anyRequest().authenticated()
+        .and()
+        .sessionManagement()
+        .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+  }
 
 }

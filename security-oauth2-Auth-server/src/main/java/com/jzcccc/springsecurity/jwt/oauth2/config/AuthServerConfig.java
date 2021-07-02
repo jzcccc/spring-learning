@@ -20,53 +20,71 @@ import java.util.List;
 @Configuration
 @EnableAuthorizationServer
 public class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
+  @Autowired
+  private AuthenticationManager authenticationManager;
+  @Autowired
+  private PasswordEncoder passwordEncoder;
 
-    private PasswordEncoder passwordEncoder;
-    private AuthenticationManager authenticationManager;
+  @Autowired
+  public AuthServerConfig(PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
+    this.passwordEncoder = passwordEncoder;
+    this.authenticationManager = authenticationManager;
+  }
 
-    @Autowired
-    public AuthServerConfig(PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
-        this.passwordEncoder = passwordEncoder;
-        this.authenticationManager = authenticationManager;
-    }
+  @Override
+  public void configure(AuthorizationServerSecurityConfigurer oauthServer) {
+    oauthServer.checkTokenAccess("isAuthenticated()");
+  }
 
-    @Bean
-    public JwtAccessTokenConverter accessTokenConverter() {
-        JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
-        converter.setAccessTokenConverter(new CustomAccessTokenConverter());
-        converter.setSigningKey("123456");
-        return converter;
-    }
+  @Override
+  public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
+    clients.inMemory()
+//        .withClient("admin")
+//        .secret(passwordEncoder.encode("admin"))
+//        .accessTokenValiditySeconds(36000)
+//        .refreshTokenValiditySeconds(864000)
+//        .authorizedGrantTypes("authorization_code", "password", "refresh_token", "client_credentials")
+//        .redirectUris("https://www.baidu.com")
+//        .scopes("user")
+//        .and()
+        .withClient("c1")
+        .secret(passwordEncoder.encode("c1"))
+        .accessTokenValiditySeconds(36000)
+        .refreshTokenValiditySeconds(864000)
+        .authorizedGrantTypes("authorization_code", "password", "refresh_token", "client_credentials")
+        .redirectUris("https://www.baidu.com")
+        .scopes("user");
+//        .and()
+//        .withClient("c2")
+//        .secret(passwordEncoder.encode("c2"))
+//        .accessTokenValiditySeconds(36000)
+//        .refreshTokenValiditySeconds(864000)
+//        .authorizedGrantTypes("authorization_code", "password", "refresh_token", "client_credentials")
+//        .redirectUris("https://www.baidu.com")
+//        .scopes("user");
+  }
 
-    @Bean
-    public TokenStore tokenStore() {
-        return new JwtTokenStore(accessTokenConverter());
-    }
+  @Override
+  public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
+    TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
+    tokenEnhancerChain.setTokenEnhancers(List.of(new CustomTokenEnhancer(), accessTokenConverter()));
+    endpoints.authenticationManager(authenticationManager)
+        .tokenEnhancer(tokenEnhancerChain)
+        .accessTokenConverter(accessTokenConverter())
+        .tokenStore(tokenStore());
+  }
 
-    @Override
-    public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
-        TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
-        tokenEnhancerChain.setTokenEnhancers(List.of(new CustomTokenEnhancer(), accessTokenConverter()));
-        endpoints.authenticationManager(authenticationManager)
-                .tokenEnhancer(tokenEnhancerChain)
-                .accessTokenConverter(accessTokenConverter())
-                .tokenStore(tokenStore());
-    }
+  @Bean
+  public JwtAccessTokenConverter accessTokenConverter() {
+    JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
+    converter.setAccessTokenConverter(new CustomAccessTokenConverter());
+    converter.setSigningKey("123456");
+    return converter;
+  }
 
-    @Override
-    public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        clients.inMemory()
-                .withClient("admin")
-                .secret(passwordEncoder.encode("admin"))
-                .accessTokenValiditySeconds(36000)
-                .refreshTokenValiditySeconds(864000)
-                .authorizedGrantTypes("authorization_code","password","refresh_token")
-                .redirectUris("https://www.baidu.com")
-                .scopes("user");
-    }
+  @Bean
+  public TokenStore tokenStore() {
+    return new JwtTokenStore(accessTokenConverter());
+  }
 
-    @Override
-    public void configure(AuthorizationServerSecurityConfigurer oauthServer){
-        oauthServer.checkTokenAccess("isAuthenticated()");
-    }
 }

@@ -2,8 +2,8 @@ security:
   oauth2:
     client:
       access-token-uri: http://localhost:8080/oauth/token
-      client-id: c1
-      client-secret: c1
+      client-id: c2
+      client-secret: c2
       user-authorization-uri: http://localhost:8080/oauth/authorize
 #      grant-type: client_credentials
 #      scope: all
@@ -14,6 +14,6 @@ security:
 #      user-info-uri: http://localhost:8080/oauth/check_user
 #      prefer-token-info: true
 server:
-  port: 8090
+  port: 8091
   servlet:
-    context-path: /resource
+    context-path: /resource2

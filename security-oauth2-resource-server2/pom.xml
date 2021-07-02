@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.jzcccc</groupId>
-	<artifactId>security-jwt-oauth2-resource-server2</artifactId>
+	<artifactId>security-jwt-oauth2-resource-server</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>security-jwt-oauth2-resource-server</name>
+	<name>security-jwt-oauth2-resource-server2</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>11</java.version>
